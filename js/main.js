@@ -1,13 +1,12 @@
 'use strict';
 
-//1    *** Функция для создания массива из 8 сгенерированных JS объектов ***
-
-//avatar filenames function
+// 1
+// avatar filenames function
 var avatar = function (i) {
-  return 'img/avatars/user0' + i + '.png';
+  return 'img/avatars/user0' + (i + 1) + '.png';
 };
 
-//offer parameters
+// offer parameters
 var TITLE = 'заголовок предложения';
 var PRICE = Math.round(Math.random() * 1000 + 100);
 var TYPE = ['palace', 'flat', 'house', 'bungalo'];
@@ -18,16 +17,16 @@ var CHECKOUT = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var DESCRIPTION = 'строка с описанием';
 var PHOTO_QTY = Math.round(Math.random() * 5);
-var MAP_WIDTH = 600;
-var MAP_HEIGHT = 350;
+var MAP_WIDTH = 1200;
+var MAP_HEIGHT = 500;
 var QTY_HOUSE_CARD = 8;
 
-//Random location
+// Random location
 var getLocation = function (x) {
   return Math.round(Math.random() * x);
 };
 
-//Random photos gallery
+// Random photos gallery
 var getPhotoArray = function (qtyPhoto) {
   var photoArray = [];
   for (var i = 0; i < qtyPhoto; i++) {
@@ -36,71 +35,86 @@ var getPhotoArray = function (qtyPhoto) {
   return photoArray;
 };
 
-//Random element from array
+// One random element from array
 var getRandomElement = function (anyArray) {
   return anyArray[Math.round(Math.random() * (anyArray.length - 1))];
 };
 
-//Random elements from basic array
+// Several random elements from array
 var getRandomArray = function (anyArray) {
   var newArray = [];
-    for (var i = 0; i < Math.round(Math.random() * (anyArray.length - 1)); i++) {
-      newArray.push(anyArray[i]);
-    }
+  for (var i = 0; i < Math.round(Math.random() * (anyArray.length - 1)); i++) {
+    newArray.push(anyArray[i]);
+  }
   return newArray;
 };
 
-//function to creating array of 'QTY_HOUSE_CARD' generated objecrs
+// function to creating array of 'QTY_HOUSE_CARD' generated objects
 var createArrayOf8GenObject = function (qty) {
 
   var genHousesArray = [];
 
   for (var i = 0; i < qty; i++) {
+    var positionX = getLocation(MAP_WIDTH);
+    var positionY = getLocation(MAP_HEIGHT) + 130;
 
-    var author = {
-      "avatar": avatar(i)
+    var houseTicket = {
+      author: {
+        avatar: avatar(i)
+      },
+      offer: {
+        title: TITLE + i,
+        address: positionX + ', ' + positionY,
+        price: PRICE,
+        type: getRandomElement(TYPE),
+        rooms: ROOMS,
+        guests: GUESTS,
+        checkin: getRandomElement(CHECKIN),
+        checkout: getRandomElement(CHECKOUT),
+        features: getRandomArray(FEATURES),
+        description: DESCRIPTION + i,
+        photos: getPhotoArray(PHOTO_QTY)
+      },
+      location: {
+        x: positionX,
+        y: positionY
+      },
     };
-
-    var position = {
-      "x": getLocation(MAP_WIDTH),
-      "y": getLocation(MAP_HEIGHT)
-    };
-
-    var offer = {
-      "title": TITLE + i,
-      "address": position.x + ', ' + position.y,
-      "price": PRICE,
-      "type": getRandomElement(TYPE),
-      "rooms": ROOMS,
-      "guests": GUESTS,
-      "checkin": getRandomElement(CHECKIN),
-      "checkout": getRandomElement(CHECKOUT),
-      "features": getRandomArray(FEATURES),
-      "description": DESCRIPTION + i,
-      "photos": getPhotoArray(PHOTO_QTY)
-    };
-
-    var houseTicket = [author, offer, position];
 
     genHousesArray.push(houseTicket);
   }
-  //console.log(genHousesArray);
+
+  return genHousesArray;
 };
 
-createArrayOf8GenObject(QTY_HOUSE_CARD);
+// 2
+document.querySelector('.map').classList.remove('map--faded');
 
+// 3
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var mapPins = document.querySelector('.map__pins');
+var fragment = document.createDocumentFragment();
 
+// Add new styles to pin
+var creatingPin = function (pinsArrayElement) {
+  var newPin = pinTemplate.cloneNode(true);
 
-//2     Какое-то временно решение
- var map = document.querySelector('.map');
- map.classList.remove('map-faded');
+  newPin.querySelector('img').src = pinsArrayElement.author.avatar;
+  newPin.style.left = pinsArrayElement.location.x + 'px';
+  newPin.style.top = pinsArrayElement.location.y + 'px';
 
+  return newPin;
+};
 
+// 4
+var showPins = function () {
+  var pinsArray = createArrayOf8GenObject(QTY_HOUSE_CARD);
 
+  for (var i = 0; i < pinsArray.length; i++) {
+    fragment.appendChild(creatingPin(pinsArray[i]));
+  }
 
-//3
+  mapPins.appendChild(fragment);
+};
 
-//4
-
-
-
+showPins();
