@@ -20,6 +20,8 @@ var PHOTO_QTY = Math.round(Math.random() * 5);
 var MAP_WIDTH = 1200;
 var MAP_HEIGHT = 500;
 var QTY_HOUSE_CARD = 8;
+var PIN_OFFSET_X = -25;
+var PIN_OFFSET_Y = -70;
 
 // Random location
 var getLocation = function (x) {
@@ -50,7 +52,7 @@ var getRandomArray = function (anyArray) {
 };
 
 // function to creating array of 'QTY_HOUSE_CARD' generated objects
-var createArrayOf8GenObject = function (qty) {
+var creatingArray = function (qty) {
 
   var genHousesArray = [];
 
@@ -100,15 +102,15 @@ var creatingPin = function (pinsArrayElement) {
   var newPin = pinTemplate.cloneNode(true);
 
   newPin.querySelector('img').src = pinsArrayElement.author.avatar;
-  newPin.style.left = pinsArrayElement.location.x + 'px';
-  newPin.style.top = pinsArrayElement.location.y + 'px';
+  newPin.style.left = pinsArrayElement.location.x + PIN_OFFSET_X + 'px';
+  newPin.style.top = pinsArrayElement.location.y + PIN_OFFSET_Y + 'px';
 
   return newPin;
 };
 
 // 4
 var showPins = function () {
-  var pinsArray = createArrayOf8GenObject(QTY_HOUSE_CARD);
+  var pinsArray = creatingArray(QTY_HOUSE_CARD);
 
   for (var i = 0; i < pinsArray.length; i++) {
     fragment.appendChild(creatingPin(pinsArray[i]));
